@@ -1,7 +1,5 @@
 # Background Video Menu
 
-A high-performance Geometry Dash mod for the Geode framework that enables hardware-accelerated video playback and high-resolution image backgrounds with real-time interactive mouse framing, independent audio control, and per-scene profile management.
-
 Weeeeeell, I wanted to take on this project on a bit of a whim; I found a very well-made version and decided to use it as a starting point,
 which made this possible. There are some minor errors and bugs on mobile devices—partly due to how resource-heavy it is—but I’ll be addressing those later on bye bye
 ---
