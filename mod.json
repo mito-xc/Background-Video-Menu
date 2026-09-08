@@ -1,121 +1,36 @@
 {
-  "geode": "5.7.1",
+  "geode": "5.10.1",
   "gd": {
     "win": "2.2081",
     "android": "2.2081",
     "mac": "2.2081",
     "ios": "2.2081"
   },
-  "version": "1.1.7",
+  "version": "2.0.0",
   "id": "user95401.main-menu-background",
-  "name": "Main Menu Background",
-  "developers": [ "lil2kki" ],
-  "description": "My background menu mod with some extra stuff.",
-  "tags": [ "interface", "utility" ],
+  "name": "Background Video Menu",
+  "developers": [ "Mituxs", "lil2kki" ],
+  "description": "High-performance video & image background player with hardware acceleration, interactive mouse framing, and multi-scene support.",
+  "tags": [ "interface", "utility", "customization" ],
   "links": {
-    "community": "https://discord.gg/kXjQ8QEWNU",
-    "homepage": "https://t.me/lil2kki_ch",
-    "source": "https://github.com/lil2kki/Menu-Background"
-  },
-  "dependencies": {
-      "prevter.imageplus": {
-          "required": false,
-          "version": ">=v1.0.0"
-      }
+    "source": "https://github.com/lil2kki/Menu-Background",
+    "community": "https://discord.gg/kXjQ8QEWNU"
   },
   "settings": {
-    "SETUP_MODE_ENABLED": {
-      "name": "Setup Mode",
-      "description": "Adds control ui to main menu.",
-      "type": "bool",
-      "default": true
-    },
-    "SETUP_WINDOW_SCALE": {
-      "name": "Setup Window Scale",
-      "type": "float",
-      "default": 1,
-      "min": 0.1,
-      "max": 10.0
-    },
-    "OVERLAP_ALLGRADBG": {
-      "name": "Add to layers with gradiend bg",
-      "description": "Add MenuGameLayer to all layers that have gradient bg.",
-      "type": "bool",
-      "default": false
-    },
     "BACKGROUND_FILE": {
       "type": "file",
-      "name": "Background image file",
+      "name": "Default Background File",
+      "description": "Default background media file used for Main Menu.",
       "default": "background.png",
       "control": {
         "dialog": "open",
         "filters": [
-          { "files": [ "*.png", "*.jpg", "*.jxl", "*.gif", "*.webp", "*.qoi" ] }
+          {
+            "description": "Supported Media Files",
+            "files": [ "*.mp4", "*.mov", "*.wmv", "*.webm", "*.m4v", "*.avi", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.jxl", "*.qoi" ]
+          }
         ]
       }
-    },
-    "FORCE_BACKGROUND_ID": {
-      "name": "Force Game Background ID",
-      "type": "int",
-      "default": 0,
-      "max": 100
-    },
-    "FORCE_GROUND_ID": {
-      "name": "Force Game Ground ID",
-      "type": "int",
-      "default": 0,
-      "max": 100
-    },
-    "HIDE_GAME": {
-      "name": "Hide Game",
-      "description": "overlap by black layer.",
-      "type": "bool",
-      "default": false
-    },
-    "HIDE_GROUND": {
-      "name": "Hide Ground",
-      "type": "bool",
-      "default": false
-    },
-    "BG_ZORDER": {
-      "name": "BG z-Order",
-      "type": "int",
-      "default": 0,
-      "min": -1
-    },
-    "BG_SCALE_TYPE": {
-      "type": "string",
-      "name": "Scale",
-      "default": "Fullscreen Stretch",
-      "one-of": [ "Fullscreen Stretch", "Up to WinHeight", "Up to WinWidth", "Up to WinSize", "NONE" ]
-    },
-    "BG_SCALEX": {
-      "name": "BG ScaleX",
-      "type": "float",
-      "default": 0,
-      "min": -10.0,
-      "max": 10.0
-    },
-    "BG_SCALEY": {
-      "name": "BG ScaleY",
-      "type": "float",
-      "default": 0,
-      "min": -10.0,
-      "max": 10.0
-    },
-    "BG_POSX": {
-      "name": "BG PosX",
-      "type": "float",
-      "default": 0,
-      "min": -500.0,
-      "max": 500.0
-    },
-    "BG_POSY": {
-      "name": "BG PosY",
-      "type": "float",
-      "default": 0,
-      "min": -500.0,
-      "max": 500.0
     }
   }
 }
