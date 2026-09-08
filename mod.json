@@ -10,27 +10,18 @@
   "id": "user95401.main-menu-background",
   "name": "Background Video Menu",
   "developers": [ "Mituxs", "lil2kki" ],
-  "description": "High-performance video & image background player with hardware acceleration, interactive mouse framing, and multi-scene support.",
+  "description": "High-performance video and image background player with hardware acceleration, interactive mouse framing, and multi-scene support.",
   "tags": [ "interface", "utility", "customization" ],
   "links": {
-    "source": "https://github.com/lil2kki/Menu-Background",
-    "community": "https://discord.gg/kXjQ8QEWNU"
+    "source": "https://github.com/mito-xc/Background-Video-Menu",
+    "community": "https://discord.gg/tGX6kSDdK"
   },
   "settings": {
-    "BACKGROUND_FILE": {
-      "type": "file",
-      "name": "Default Background File",
-      "description": "Default background media file used for Main Menu.",
-      "default": "background.png",
-      "control": {
-        "dialog": "open",
-        "filters": [
-          {
-            "description": "Supported Media Files",
-            "files": [ "*.mp4", "*.mov", "*.wmv", "*.webm", "*.m4v", "*.avi", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.jxl", "*.qoi" ]
-          }
-        ]
-      }
+    "SHOW_MENU_BUTTON": {
+      "type": "bool",
+      "name": "Show Menu Button",
+      "description": "Show the button in the main menu to open background settings.",
+      "default": true
     }
   }
 }

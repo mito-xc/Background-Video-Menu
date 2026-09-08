@@ -117,17 +117,19 @@ class $modify(CustomMenuLayer, MenuLayer) {
     bool init() {
         if (!MenuLayer::init()) return false;
 
-        // Añadir botón en el menú lateral derecho
-        if (auto rightMenu = this->getChildByID("right-side-menu")) {
-            auto spr = CCSprite::createWithSpriteFrameName("GJ_optionsBtn_001.png");
-            if (spr) {
-                spr->setScale(0.7f);
-                auto btn = CCMenuItemSpriteExtra::create(
-                    spr, this, menu_selector(CustomMenuLayer::onOpenBackgroundSettings)
-                );
-                btn->setID("background-settings-btn"_spr);
-                rightMenu->addChild(btn);
-                rightMenu->updateLayout();
+        // Añadir botón en el menú lateral derecho si está habilitado en la configuración
+        if (Mod::get()->getSettingValue<bool>("SHOW_MENU_BUTTON")) {
+            if (auto rightMenu = this->getChildByID("right-side-menu")) {
+                auto spr = CCSprite::createWithSpriteFrameName("GJ_optionsBtn_001.png");
+                if (spr) {
+                    spr->setScale(0.7f);
+                    auto btn = CCMenuItemSpriteExtra::create(
+                        spr, this, menu_selector(CustomMenuLayer::onOpenBackgroundSettings)
+                    );
+                    btn->setID("background-settings-btn"_spr);
+                    rightMenu->addChild(btn);
+                    rightMenu->updateLayout();
+                }
             }
         }
 

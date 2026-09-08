@@ -27,18 +27,6 @@ bool ProfileManager::isVideoExtension(const std::filesystem::path& path) const {
 }
 
 void ProfileManager::load() {
-    auto bgFileSetting = Mod::get()->getSettingValue<std::filesystem::path>("BACKGROUND_FILE");
-    std::string bgFile = bgFileSetting.string();
-
-    if (!bgFile.empty()) {
-        if (isVideoExtension(bgFile)) {
-            m_profiles[static_cast<size_t>(SceneType::MainMenu)].bgType = BgType::Video;
-        } else {
-            m_profiles[static_cast<size_t>(SceneType::MainMenu)].bgType = BgType::ImageOrGif;
-        }
-        m_profiles[static_cast<size_t>(SceneType::MainMenu)].filePath = bgFile;
-    }
-
     if (!std::filesystem::exists(m_configPath)) {
         return;
     }
@@ -165,7 +153,7 @@ cocos2d::CCNode* ProfileManager::createBackgroundNode(SceneType scene, const coc
     if (!std::filesystem::exists(fullPath)) {
         auto resolved = CCFileUtils::get()->fullPathForFilename(prof.filePath.c_str(), 0);
         if (!resolved.empty()) {
-            fullPath = string::pathToString(resolved);
+            fullPath = std::string(resolved);
         }
     }
 
@@ -191,7 +179,7 @@ cocos2d::CCNode* ProfileManager::createBackgroundNode(SceneType scene, const coc
     }
     // 2. Sprite estándar (Imagen / GIF) con escalado completo
     else {
-        auto sprite = CCSprite::create(string::pathToString(fullPath).c_str());
+        auto sprite = CCSprite::create(fullPath.string().c_str());
         if (sprite) {
             sprite->setOpacity(static_cast<GLubyte>(std::clamp(prof.opacity, 0.0f, 1.0f) * 255.0f));
             sprite->setPosition(targetSize * 0.5f + CCPoint{prof.posX, prof.posY});
