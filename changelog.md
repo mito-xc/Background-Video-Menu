@@ -1,4 +1,4 @@
-# 2.0.0 - Video Engine and Interactive UI Release
+# 2.0.1 - Video Engine and Interactive UI Release
 
 - **Hardware-Accelerated Video Playback**: Integrated Windows Media Foundation (WMF) asynchronous video decoder supporting `.mp4`, `.mov`, `.wmv`, `.webm`, `.avi`, and `.m4v` container formats.
 - **Interactive Mouse Framing Viewport**: Added `FramingPopup` with click-and-drag mouse panning, two-layer clipping container, and 16:9 viewport outline.

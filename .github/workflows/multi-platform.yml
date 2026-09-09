@@ -94,4 +94,4 @@ jobs:
           tag: "${{steps.json_properties.outputs.version}}"
           artifacts: "${{steps.build.outputs.build-output}}/*"
           artifactErrorsFailBuild: true
-          allowUpdates: false
+          allowUpdates: true
