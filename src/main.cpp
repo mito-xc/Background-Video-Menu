@@ -30,6 +30,28 @@ $on_mod(Loaded) {
 // ============================================================================
 #include <Geode/modify/MenuGameLayer.hpp>
 class $modify(MenuGameLayerExt, MenuGameLayer) {
+    void cleanGround() {
+        if (m_groundLayer) {
+            m_groundLayer->setVisible(false);
+            m_groundLayer->setScale(0.f);
+            m_groundLayer->setPosition({ -9999.f, -9999.f });
+        }
+        if (auto ground = this->getChildByType<GJGroundLayer>(0)) {
+            ground->setVisible(false);
+            ground->setScale(0.f);
+            ground->setPosition({ -9999.f, -9999.f });
+        }
+        if (auto children = this->getChildren()) {
+            for (unsigned int i = 0; i < children->count(); ++i) {
+                if (auto g = dynamic_cast<GJGroundLayer*>(children->objectAtIndex(i))) {
+                    g->setVisible(false);
+                    g->setScale(0.f);
+                    g->setPosition({ -9999.f, -9999.f });
+                }
+            }
+        }
+    }
+
     void cleanPlayersAndParticles() {
         if (m_playerObject) {
             m_playerObject->setVisible(false);
@@ -84,9 +106,7 @@ class $modify(MenuGameLayerExt, MenuGameLayer) {
 
             // Ocultar suelo si está activado
             if (profile.hideGround) {
-                if (auto ground = this->getChildByType<GJGroundLayer>(0)) {
-                    ground->setVisible(false);
-                }
+                cleanGround();
             }
         }
 
@@ -105,6 +125,9 @@ class $modify(MenuGameLayerExt, MenuGameLayer) {
         if (profile.hidePlayers) {
             cleanPlayersAndParticles();
         }
+        if (profile.hideGround) {
+            cleanGround();
+        }
     }
 };
 
@@ -120,7 +143,10 @@ class $modify(CustomMenuLayer, MenuLayer) {
         // Añadir botón en el menú lateral derecho si está habilitado en la configuración
         if (Mod::get()->getSettingValue<bool>("SHOW_MENU_BUTTON")) {
             if (auto rightMenu = this->getChildByID("right-side-menu")) {
-                auto spr = CCSprite::createWithSpriteFrameName("GJ_optionsBtn_001.png");
+                auto spr = CCSprite::createWithSpriteFrameName("GJ_paintBtn_001.png");
+                if (!spr) {
+                    spr = CCSprite::createWithSpriteFrameName("GJ_optionsBtn_001.png");
+                }
                 if (spr) {
                     spr->setScale(0.7f);
                     auto btn = CCMenuItemSpriteExtra::create(

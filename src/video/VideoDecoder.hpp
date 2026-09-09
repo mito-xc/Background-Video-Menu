@@ -11,6 +11,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#include <mmsystem.h>
 #include <mfapi.h>
 #include <mfidl.h>
 #include <mfreadwrite.h>
@@ -39,6 +40,12 @@ public:
     bool isPlaying() const { return m_isPlaying.load(); }
     bool isLoaded() const { return m_isLoaded.load(); }
 
+    void setMute(bool mute) { m_mute.store(mute); }
+    bool isMute() const { return m_mute.load(); }
+
+    void setVolume(float volume) { m_volume.store(std::clamp(volume, 0.0f, 1.0f)); }
+    float getVolume() const { return m_volume.load(); }
+
     uint32_t getWidth() const { return m_width; }
     uint32_t getHeight() const { return m_height; }
     double getFPS() const { return m_fps; }
@@ -49,14 +56,17 @@ public:
 
 private:
     void decodeLoop();
-    bool readFrameInternal(VideoFrame& frame);
     void seekToStart();
+    void writeAudioPcm(const uint8_t* data, size_t length);
 
     std::filesystem::path m_filePath;
     std::atomic<bool> m_isLoaded{false};
     std::atomic<bool> m_isPlaying{false};
     std::atomic<bool> m_loop{true};
     std::atomic<bool> m_stopRequested{false};
+    std::atomic<bool> m_mute{false};
+    std::atomic<float> m_volume{1.0f};
+    std::atomic<bool> m_hasAudio{false};
 
     uint32_t m_width{0};
     uint32_t m_height{0};
@@ -77,5 +87,11 @@ private:
 #ifdef _WIN32
     IMFSourceReader* m_pReader{nullptr};
     bool m_mfInitialized{false};
+    HWAVEOUT m_hWaveOut{nullptr};
+    std::vector<WAVEHDR> m_waveHeaders;
+    std::vector<std::vector<uint8_t>> m_waveBuffers;
+    size_t m_currentWaveHdr{0};
+    static constexpr size_t WAVE_BUFFER_COUNT = 8;
+    static constexpr size_t WAVE_BUFFER_SIZE = 8192;
 #endif
 };

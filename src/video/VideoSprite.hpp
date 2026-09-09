@@ -30,6 +30,12 @@ public:
     void setLoop(bool loop);
     bool isLoop() const;
 
+    void setVolume(float volume);
+    float getVolume() const;
+
+    void setMute(bool mute);
+    bool isMute() const;
+
     void play();
     void pause();
     void stop();

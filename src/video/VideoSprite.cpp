@@ -175,6 +175,22 @@ bool VideoSprite::isLoop() const {
     return m_decoder ? m_decoder->isLoop() : true;
 }
 
+void VideoSprite::setVolume(float volume) {
+    if (m_decoder) m_decoder->setVolume(volume);
+}
+
+float VideoSprite::getVolume() const {
+    return m_decoder ? m_decoder->getVolume() : 1.0f;
+}
+
+void VideoSprite::setMute(bool mute) {
+    if (m_decoder) m_decoder->setMute(mute);
+}
+
+bool VideoSprite::isMute() const {
+    return m_decoder ? m_decoder->isMute() : false;
+}
+
 void VideoSprite::play() {
     if (m_decoder) m_decoder->play();
 }

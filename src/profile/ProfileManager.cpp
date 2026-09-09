@@ -169,6 +169,8 @@ cocos2d::CCNode* ProfileManager::createBackgroundNode(SceneType scene, const coc
             videoSprite->setFitMode(prof.fitMode);
             videoSprite->setTargetSize(targetSize);
             videoSprite->setLoop(prof.loop);
+            videoSprite->setVolume(prof.volume);
+            videoSprite->setMute(prof.muteAudio);
             videoSprite->setOpacity(static_cast<GLubyte>(std::clamp(prof.opacity, 0.0f, 1.0f) * 255.0f));
             videoSprite->setPosition(targetSize * 0.5f + CCPoint{prof.posX, prof.posY});
             if (prof.zoom != 1.0f) {
@@ -223,8 +225,28 @@ void reloadCurrentSceneBackground() {
             menuGameLayer->addChild(newBg, -999);
         }
         auto& prof = ProfileManager::get()->getProfile(SceneType::MainMenu);
-        if (auto ground = menuGameLayer->getChildByType<GJGroundLayer>(0)) {
-            ground->setVisible(!prof.hideGround);
+        if (prof.hideGround) {
+            if (menuGameLayer->m_groundLayer) {
+                menuGameLayer->m_groundLayer->setVisible(false);
+                menuGameLayer->m_groundLayer->setScale(0.f);
+                menuGameLayer->m_groundLayer->setPosition({ -9999.f, -9999.f });
+            }
+            if (auto ground = menuGameLayer->getChildByType<GJGroundLayer>(0)) {
+                ground->setVisible(false);
+                ground->setScale(0.f);
+                ground->setPosition({ -9999.f, -9999.f });
+            }
+        } else {
+            if (menuGameLayer->m_groundLayer) {
+                menuGameLayer->m_groundLayer->setVisible(true);
+                menuGameLayer->m_groundLayer->setScale(1.f);
+                menuGameLayer->m_groundLayer->setPosition({ 0.f, 0.f });
+            }
+            if (auto ground = menuGameLayer->getChildByType<GJGroundLayer>(0)) {
+                ground->setVisible(true);
+                ground->setScale(1.f);
+                ground->setPosition({ 0.f, 0.f });
+            }
         }
         if (prof.hidePlayers) {
             if (menuGameLayer->m_playerObject) {

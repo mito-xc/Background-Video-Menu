@@ -1,3 +1,12 @@
+# 2.0.2 - Audio Playback & Layout Fixes
+
+- **Full Video Audio Playback**: Implemented native Windows Media Foundation audio decoding to PCM with real-time waveform audio output (`waveOut`).
+- **Real-Time Volume Slider**: Added dedicated volume control slider (0% to 100%) in the settings card.
+- **Enhanced Ground Layer Suppression**: Ground textures and batch nodes are now cleanly removed when `Hide Ground` is enabled on the Main Menu and scene layers.
+- **Polished Main Menu Interface**: Changed customization button icon to paintbrush (`GJ_paintBtn_001.png`) and optimized card spacing.
+
+---
+
 # 2.0.1 - Video Engine and Interactive UI Release
 
 - **Hardware-Accelerated Video Playback**: Integrated Windows Media Foundation (WMF) asynchronous video decoder supporting `.mp4`, `.mov`, `.wmv`, `.webm`, `.avi`, and `.m4v` container formats.

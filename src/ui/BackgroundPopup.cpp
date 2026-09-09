@@ -16,7 +16,7 @@ using namespace geode::prelude;
 
 BackgroundPopup* BackgroundPopup::create(SceneType initialScene) {
     auto ret = new BackgroundPopup();
-    if (ret && ret->init(395.f, 260.f, initialScene)) {
+    if (ret && ret->init(395.f, 290.f, initialScene)) {
         ret->autorelease();
         return ret;
     }
@@ -132,7 +132,6 @@ void BackgroundPopup::refreshContent() {
         
         CCMenuItemSpriteExtra* tabBtn = nullptr;
         if (isCurrent) {
-            // Pestaña Activa: Relleno Cian brillante con texto blanco
             tabBtn = UIHelpers::createPillButton(
                 tabNames[i],
                 {56.f, 24.f},
@@ -145,7 +144,6 @@ void BackgroundPopup::refreshContent() {
                 "goldFont.fnt"
             );
         } else {
-            // Pestaña Inactiva: Fondo oscuro con borde cian tenue
             tabBtn = UIHelpers::createPillButton(
                 tabNames[i],
                 {56.f, 24.f},
@@ -168,7 +166,7 @@ void BackgroundPopup::refreshContent() {
     // TARJETA 1: Archivo y Acciones (Media Card)
     // ----------------------------------------------------
     auto card1Bg = UIHelpers::createCardBackground({365.f, 48.f}, {25, 45, 65});
-    card1Bg->setPosition({winSize.width / 2.f, winSize.height - 88.f});
+    card1Bg->setPosition({winSize.width / 2.f, winSize.height - 84.f});
     card1Bg->setTag(8888);
     m_mainLayer->addChild(card1Bg, 1);
 
@@ -177,7 +175,7 @@ void BackgroundPopup::refreshContent() {
     inputBg->setContentSize({155.f, 28.f});
     inputBg->setColor({5, 8, 14});
     inputBg->setOpacity(255);
-    inputBg->setPosition({winSize.width / 2.f - 95.f, winSize.height - 88.f});
+    inputBg->setPosition({winSize.width / 2.f - 95.f, winSize.height - 84.f});
     m_mainLayer->addChild(inputBg, 2);
 
     std::string displayFileName = (lang == Language::Spanish) ? "Fondo por defecto..." : "Default Background...";
@@ -193,7 +191,7 @@ void BackgroundPopup::refreshContent() {
     m_fileNameLabel->setScale(0.68f);
     m_fileNameLabel->setColor({220, 240, 255});
     m_fileNameLabel->setAnchorPoint({0.f, 0.5f});
-    m_fileNameLabel->setPosition({winSize.width / 2.f - 165.f, winSize.height - 88.f});
+    m_fileNameLabel->setPosition({winSize.width / 2.f - 165.f, winSize.height - 84.f});
     m_contentMenu->addChild(m_fileNameLabel, 5);
 
     // Botones de Tarjeta 1
@@ -210,12 +208,10 @@ void BackgroundPopup::refreshContent() {
         menu_selector(BackgroundPopup::onBrowseFileClicked),
         "chatFont.fnt"
     );
-    // Añadir icono de lupa si es posible
     if (auto findSpr = CCSprite::createWithSpriteFrameName("gj_findBtn_001.png")) {
         findSpr->setScale(0.38f);
         findSpr->setPosition({14.f, 14.f});
         browseBtn->getNormalImage()->addChild(findSpr, 10);
-        // Desplazar texto ligeramente a la derecha
         if (auto lbl = browseBtn->getNormalImage()->getChildren()) {
             for (unsigned int k = 0; k < lbl->count(); ++k) {
                 if (auto lNode = dynamic_cast<CCLabelBMFont*>(lbl->objectAtIndex(k))) {
@@ -224,7 +220,7 @@ void BackgroundPopup::refreshContent() {
             }
         }
     }
-    browseBtn->setPosition({winSize.width / 2.f + 32.f, winSize.height - 88.f});
+    browseBtn->setPosition({winSize.width / 2.f + 32.f, winSize.height - 84.f});
     m_contentMenu->addChild(browseBtn);
 
     // 2. [ Ajustar / Adjust ]
@@ -240,7 +236,7 @@ void BackgroundPopup::refreshContent() {
         menu_selector(BackgroundPopup::onOpenFramingPopup),
         "chatFont.fnt"
     );
-    adjustBtn->setPosition({winSize.width / 2.f + 102.f, winSize.height - 88.f});
+    adjustBtn->setPosition({winSize.width / 2.f + 102.f, winSize.height - 84.f});
     m_contentMenu->addChild(adjustBtn);
 
     // 3. [ ✕ ] Botón simétrico rojo redondeado
@@ -255,14 +251,14 @@ void BackgroundPopup::refreshContent() {
         menu_selector(BackgroundPopup::onClearFileClicked),
         "bigFont.fnt"
     );
-    clearBtn->setPosition({winSize.width / 2.f + 154.f, winSize.height - 88.f});
+    clearBtn->setPosition({winSize.width / 2.f + 154.f, winSize.height - 84.f});
     m_contentMenu->addChild(clearBtn);
 
     // ----------------------------------------------------
     // TARJETA 2: Opciones y Ajustes (Settings Card)
     // ----------------------------------------------------
-    auto card2Bg = UIHelpers::createCardBackground({365.f, 74.f}, {25, 45, 65});
-    card2Bg->setPosition({winSize.width / 2.f, winSize.height - 158.f});
+    auto card2Bg = UIHelpers::createCardBackground({365.f, 110.f}, {25, 45, 65});
+    card2Bg->setPosition({winSize.width / 2.f, winSize.height - 172.f});
     card2Bg->setTag(8889);
     m_mainLayer->addChild(card2Bg, 1);
 
@@ -272,11 +268,11 @@ void BackgroundPopup::refreshContent() {
     opLabel->setScale(0.68f);
     opLabel->setColor({255, 255, 255});
     opLabel->setAnchorPoint({0.f, 0.5f});
-    opLabel->setPosition({winSize.width / 2.f - 165.f, winSize.height - 138.f});
+    opLabel->setPosition({winSize.width / 2.f - 165.f, winSize.height - 132.f});
     m_contentMenu->addChild(opLabel);
 
     m_opacitySlider = Slider::create(this, menu_selector(BackgroundPopup::onOpacitySliderChanged), 0.58f);
-    m_opacitySlider->setPosition({winSize.width / 2.f + 5.f, winSize.height - 138.f});
+    m_opacitySlider->setPosition({winSize.width / 2.f + 5.f, winSize.height - 132.f});
     m_opacitySlider->setValue(profile.opacity);
     m_contentMenu->addChild(m_opacitySlider);
 
@@ -284,85 +280,107 @@ void BackgroundPopup::refreshContent() {
     m_opacityPercentLabel = CCLabelBMFont::create((std::to_string(opPercent) + "%").c_str(), "chatFont.fnt");
     m_opacityPercentLabel->setScale(0.68f);
     m_opacityPercentLabel->setColor({255, 255, 255});
-    m_opacityPercentLabel->setPosition({winSize.width / 2.f + 145.f, winSize.height - 138.f});
+    m_opacityPercentLabel->setPosition({winSize.width / 2.f + 145.f, winSize.height - 132.f});
     m_contentMenu->addChild(m_opacityPercentLabel);
 
-    // Fila 2: Casillas de Verificación (Checkboxes)
-    float toggleY = winSize.height - 174.f;
+    // Fila 2: Slider de Volumen
+    const char* volText = (lang == Language::Spanish) ? "Volumen:" : "Volume:";
+    auto volLabel = CCLabelBMFont::create(volText, "chatFont.fnt");
+    volLabel->setScale(0.68f);
+    volLabel->setColor({255, 255, 255});
+    volLabel->setAnchorPoint({0.f, 0.5f});
+    volLabel->setPosition({winSize.width / 2.f - 165.f, winSize.height - 160.f});
+    m_contentMenu->addChild(volLabel);
+
+    m_volumeSlider = Slider::create(this, menu_selector(BackgroundPopup::onVolumeSliderChanged), 0.58f);
+    m_volumeSlider->setPosition({winSize.width / 2.f + 5.f, winSize.height - 160.f});
+    m_volumeSlider->setValue(profile.volume);
+    m_contentMenu->addChild(m_volumeSlider);
+
+    int volPercent = static_cast<int>(profile.volume * 100.f);
+    m_volumePercentLabel = CCLabelBMFont::create((std::to_string(volPercent) + "%").c_str(), "chatFont.fnt");
+    m_volumePercentLabel->setScale(0.68f);
+    m_volumePercentLabel->setColor({255, 255, 255});
+    m_volumePercentLabel->setPosition({winSize.width / 2.f + 145.f, winSize.height - 160.f});
+    m_contentMenu->addChild(m_volumePercentLabel);
+
+    // Fila 3: Casillas de Verificación (Checkboxes)
+    float toggleY = winSize.height - 195.f;
 
     // 1. Silenciar Video (Mute)
     auto muteToggle = CCMenuItemToggler::createWithStandardSprites(
-        this, menu_selector(BackgroundPopup::onToggleMute), 0.55f
+        this, menu_selector(BackgroundPopup::onToggleMute), 0.52f
     );
     muteToggle->toggle(profile.muteAudio);
-    muteToggle->setPosition({winSize.width / 2.f - 150.f, toggleY});
+    muteToggle->setPosition({winSize.width / 2.f - 152.f, toggleY});
     m_contentMenu->addChild(muteToggle);
 
-    const char* muteText = (lang == Language::Spanish) ? "Silenciar Video" : "Mute Video";
+    const char* muteText = (lang == Language::Spanish) ? "Silenciar" : "Mute";
     auto muteLabel = CCLabelBMFont::create(muteText, "chatFont.fnt");
-    muteLabel->setScale(0.62f);
+    muteLabel->setScale(0.58f);
     muteLabel->setAnchorPoint({0.f, 0.5f});
-    muteLabel->setPosition({winSize.width / 2.f - 132.f, toggleY});
+    muteLabel->setPosition({winSize.width / 2.f - 136.f, toggleY});
     m_contentMenu->addChild(muteLabel);
 
     // 2. Bucle (Loop)
     auto loopToggle = CCMenuItemToggler::createWithStandardSprites(
-        this, menu_selector(BackgroundPopup::onToggleLoop), 0.55f
+        this, menu_selector(BackgroundPopup::onToggleLoop), 0.52f
     );
     loopToggle->toggle(profile.loop);
-    loopToggle->setPosition({winSize.width / 2.f - 24.f, toggleY});
+    loopToggle->setPosition({winSize.width / 2.f - 74.f, toggleY});
     m_contentMenu->addChild(loopToggle);
 
     const char* loopText = (lang == Language::Spanish) ? "Bucle" : "Loop";
     auto loopLabel = CCLabelBMFont::create(loopText, "chatFont.fnt");
-    loopLabel->setScale(0.62f);
+    loopLabel->setScale(0.58f);
     loopLabel->setAnchorPoint({0.f, 0.5f});
-    loopLabel->setPosition({winSize.width / 2.f - 6.f, toggleY});
+    loopLabel->setPosition({winSize.width / 2.f - 58.f, toggleY});
     m_contentMenu->addChild(loopLabel);
 
-    // 3. Opciones Contextuales por Escena
+    // 3. Ocultar Suelo (Hide Ground)
+    auto groundToggle = CCMenuItemToggler::createWithStandardSprites(
+        this, menu_selector(BackgroundPopup::onToggleHideGround), 0.52f
+    );
+    groundToggle->toggle(profile.hideGround);
+    groundToggle->setPosition({winSize.width / 2.f - 2.f, toggleY});
+    m_contentMenu->addChild(groundToggle);
+
+    const char* gText = (lang == Language::Spanish) ? "Suelo" : "Ground";
+    auto groundLabel = CCLabelBMFont::create(gText, "chatFont.fnt");
+    groundLabel->setScale(0.58f);
+    groundLabel->setAnchorPoint({0.f, 0.5f});
+    groundLabel->setPosition({winSize.width / 2.f + 14.f, toggleY});
+    m_contentMenu->addChild(groundLabel);
+
+    // 4. Opciones Contextuales (Jugadores o Capas Transparentes)
     if (m_currentScene == SceneType::MainMenu) {
         auto playersToggle = CCMenuItemToggler::createWithStandardSprites(
-            this, menu_selector(BackgroundPopup::onToggleHidePlayers), 0.55f
+            this, menu_selector(BackgroundPopup::onToggleHidePlayers), 0.52f
         );
         playersToggle->toggle(profile.hidePlayers);
-        playersToggle->setPosition({winSize.width / 2.f + 55.f, toggleY});
+        playersToggle->setPosition({winSize.width / 2.f + 72.f, toggleY});
         m_contentMenu->addChild(playersToggle);
 
-        const char* pText = (lang == Language::Spanish) ? "Ocultar Jugadores" : "Hide Players";
+        const char* pText = (lang == Language::Spanish) ? "Jugadores" : "Players";
         auto playersLabel = CCLabelBMFont::create(pText, "chatFont.fnt");
-        playersLabel->setScale(0.62f);
+        playersLabel->setScale(0.58f);
         playersLabel->setAnchorPoint({0.f, 0.5f});
-        playersLabel->setPosition({winSize.width / 2.f + 73.f, toggleY});
+        playersLabel->setPosition({winSize.width / 2.f + 88.f, toggleY});
         m_contentMenu->addChild(playersLabel);
     } else if (m_currentScene == SceneType::LevelSelect || m_currentScene == SceneType::LevelBrowser) {
         auto transToggle = CCMenuItemToggler::createWithStandardSprites(
-            this, menu_selector(BackgroundPopup::onToggleTransparentLayers), 0.55f
+            this, menu_selector(BackgroundPopup::onToggleTransparentLayers), 0.52f
         );
         transToggle->toggle(profile.transparentLayers);
-        transToggle->setPosition({winSize.width / 2.f + 50.f, toggleY});
+        transToggle->setPosition({winSize.width / 2.f + 72.f, toggleY});
         m_contentMenu->addChild(transToggle);
 
-        const char* tText = (lang == Language::Spanish) ? "Capas Transparentes" : "Transparent UI";
+        const char* tText = (lang == Language::Spanish) ? "Transparente" : "Transp. UI";
         auto transLabel = CCLabelBMFont::create(tText, "chatFont.fnt");
-        transLabel->setScale(0.62f);
+        transLabel->setScale(0.58f);
         transLabel->setAnchorPoint({0.f, 0.5f});
-        transLabel->setPosition({winSize.width / 2.f + 68.f, toggleY});
+        transLabel->setPosition({winSize.width / 2.f + 88.f, toggleY});
         m_contentMenu->addChild(transLabel);
-    } else {
-        auto groundToggle = CCMenuItemToggler::createWithStandardSprites(
-            this, menu_selector(BackgroundPopup::onToggleHideGround), 0.55f
-        );
-        groundToggle->toggle(profile.hideGround);
-        groundToggle->setPosition({winSize.width / 2.f + 55.f, toggleY});
-        m_contentMenu->addChild(groundToggle);
-
-        const char* gText = (lang == Language::Spanish) ? "Ocultar Suelo" : "Hide Ground";
-        auto groundLabel = CCLabelBMFont::create(gText, "chatFont.fnt");
-        groundLabel->setScale(0.62f);
-        groundLabel->setAnchorPoint({0.f, 0.5f});
-        groundLabel->setPosition({winSize.width / 2.f + 73.f, toggleY});
-        m_contentMenu->addChild(groundLabel);
     }
 
     // ----------------------------------------------------
@@ -371,11 +389,11 @@ void BackgroundPopup::refreshContent() {
     const char* applyText = (lang == Language::Spanish) ? "Aplicar Cambios" : "Apply Changes";
     auto applyBtn = UIHelpers::createPillButton(
         applyText,
-        {180.f, 32.f},
+        {180.f, 30.f},
         {0, 185, 215},
         {0, 230, 255},
         {255, 255, 255},
-        0.58f,
+        0.55f,
         this,
         menu_selector(BackgroundPopup::onApplyChanges),
         "goldFont.fnt"
@@ -394,11 +412,6 @@ void BackgroundPopup::onToggleLanguage(CCObject*) {
     auto cur = ProfileManager::get()->getLanguage();
     auto next = (cur == Language::Spanish) ? Language::English : Language::Spanish;
     ProfileManager::get()->setLanguage(next);
-
-    // Actualizar botón de idioma
-    if (auto langBtn = m_mainLayer->getChildByTag(777)) {
-        // En refreshContent o recreación
-    }
     refreshContent();
 }
 
@@ -484,6 +497,19 @@ void BackgroundPopup::onOpacitySliderChanged(CCObject*) {
     if (m_opacityPercentLabel) {
         int percent = static_cast<int>(prof.opacity * 100.f);
         m_opacityPercentLabel->setString((std::to_string(percent) + "%").c_str());
+    }
+}
+
+void BackgroundPopup::onVolumeSliderChanged(CCObject*) {
+    if (!m_volumeSlider) return;
+    auto& prof = ProfileManager::get()->getProfile(m_currentScene);
+    prof.volume = m_volumeSlider->getValue();
+    ProfileManager::get()->save();
+    reloadCurrentSceneBackground();
+
+    if (m_volumePercentLabel) {
+        int percent = static_cast<int>(prof.volume * 100.f);
+        m_volumePercentLabel->setString((std::to_string(percent) + "%").c_str());
     }
 }
 

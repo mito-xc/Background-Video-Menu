@@ -81,7 +81,7 @@ struct SceneProfile {
 
     // Opciones de audio y reproducción / Playback & Audio
     bool loop{true};
-    bool muteAudio{true};
+    bool muteAudio{false};
     float volume{1.0f};
 };
 

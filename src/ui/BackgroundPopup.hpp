@@ -14,9 +14,11 @@ protected:
 
     cocos2d::CCLabelBMFont* m_fileNameLabel{nullptr};
     cocos2d::CCLabelBMFont* m_opacityPercentLabel{nullptr};
+    cocos2d::CCLabelBMFont* m_volumePercentLabel{nullptr};
     cocos2d::CCMenu* m_contentMenu{nullptr};
     cocos2d::CCMenu* m_tabsMenu{nullptr};
     Slider* m_opacitySlider{nullptr};
+    Slider* m_volumeSlider{nullptr};
 
     bool init(float width, float height, SceneType initialScene);
     void refreshContent();
@@ -33,6 +35,7 @@ protected:
     void onToggleLoop(cocos2d::CCObject* sender);
     void onToggleMute(cocos2d::CCObject* sender);
     void onOpacitySliderChanged(cocos2d::CCObject* sender);
+    void onVolumeSliderChanged(cocos2d::CCObject* sender);
     void onApplyChanges(cocos2d::CCObject* sender);
 
 public:
