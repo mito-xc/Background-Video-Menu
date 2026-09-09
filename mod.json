@@ -7,7 +7,7 @@
     "ios": "2.2081"
   },
   "version": "2.0.0",
-  "id": "user95401.main-menu-background",
+  "id": "mituxs.background-video-menu",
   "name": "Background Video Menu",
   "developers": [ "Mituxs", "lil2kki" ],
   "description": "High-performance video and image background player with hardware acceleration, interactive mouse framing, and multi-scene support.",
