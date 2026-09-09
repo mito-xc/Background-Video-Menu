@@ -45,7 +45,6 @@ bool VideoDecoder::open(const std::filesystem::path& filepath) {
     HRESULT hr = MFCreateAttributes(&pAttributes, 2);
     if (FAILED(hr)) return false;
 
-    // Enable hardware acceleration / DXVA video processing when available
     pAttributes->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
     pAttributes->SetUINT32(MF_SOURCE_READER_ENABLE_ADVANCED_VIDEO_PROCESSING, TRUE);
 
@@ -57,13 +56,41 @@ bool VideoDecoder::open(const std::filesystem::path& filepath) {
         return false;
     }
 
-    // Configure the video decoder to output uncompressed RGB32
+    m_videoStreamIndex = (DWORD)-1;
+    m_audioStreamIndex = (DWORD)-1;
+
+    // Detect video and audio stream indices
+    for (DWORD i = 0; ; ++i) {
+        IMFMediaType* pNativeType = nullptr;
+        hr = m_pReader->GetNativeMediaType(i, 0, &pNativeType);
+        if (FAILED(hr) || !pNativeType) {
+            break;
+        }
+
+        GUID majorType = GUID_NULL;
+        pNativeType->GetGUID(MF_MT_MAJOR_TYPE, &majorType);
+        pNativeType->Release();
+
+        if (majorType == MFMediaType_Video && m_videoStreamIndex == (DWORD)-1) {
+            m_videoStreamIndex = i;
+        } else if (majorType == MFMediaType_Audio && m_audioStreamIndex == (DWORD)-1) {
+            m_audioStreamIndex = i;
+        }
+    }
+
+    // If no video stream was found, fallback to first video stream selection
+    if (m_videoStreamIndex == (DWORD)-1) {
+        m_videoStreamIndex = 0;
+    }
+
+    // Configure Video Stream
+    m_pReader->SetStreamSelection(m_videoStreamIndex, TRUE);
     IMFMediaType* pVideoType = nullptr;
     hr = MFCreateMediaType(&pVideoType);
     if (SUCCEEDED(hr)) {
         pVideoType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
         pVideoType->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32);
-        hr = m_pReader->SetCurrentMediaType((DWORD)MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, pVideoType);
+        hr = m_pReader->SetCurrentMediaType(m_videoStreamIndex, nullptr, pVideoType);
         pVideoType->Release();
     }
 
@@ -72,9 +99,9 @@ bool VideoDecoder::open(const std::filesystem::path& filepath) {
         return false;
     }
 
-    // Get output video dimensions and framerate
+    // Query video dimensions and framerate
     IMFMediaType* pCurrentType = nullptr;
-    hr = m_pReader->GetCurrentMediaType((DWORD)MF_SOURCE_READER_FIRST_VIDEO_STREAM, &pCurrentType);
+    hr = m_pReader->GetCurrentMediaType(m_videoStreamIndex, &pCurrentType);
     if (SUCCEEDED(hr) && pCurrentType) {
         UINT32 w = 0, h = 0;
         if (SUCCEEDED(MFGetAttributeSize(pCurrentType, MF_MT_FRAME_SIZE, &w, &h))) {
@@ -90,52 +117,53 @@ bool VideoDecoder::open(const std::filesystem::path& filepath) {
         pCurrentType->Release();
     }
 
-    // Configure audio stream for uncompressed 44.1kHz Stereo 16-bit PCM
-    m_pReader->SetStreamSelection((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM, TRUE);
-    IMFMediaType* pAudioType = nullptr;
-    hr = MFCreateMediaType(&pAudioType);
-    if (SUCCEEDED(hr)) {
-        pAudioType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
-        pAudioType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
-        pAudioType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, 2);
-        pAudioType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, 44100);
-        pAudioType->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 16);
-        pAudioType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 4);
-        pAudioType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, 44100 * 4);
+    // Configure Audio Stream (if present)
+    if (m_audioStreamIndex != (DWORD)-1) {
+        m_pReader->SetStreamSelection(m_audioStreamIndex, TRUE);
+        IMFMediaType* pAudioType = nullptr;
+        hr = MFCreateMediaType(&pAudioType);
+        if (SUCCEEDED(hr)) {
+            pAudioType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
+            pAudioType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
+            pAudioType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, 2);
+            pAudioType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, 44100);
+            pAudioType->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 16);
+            pAudioType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 4);
+            pAudioType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, 44100 * 4);
 
-        HRESULT hrAudio = m_pReader->SetCurrentMediaType((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, pAudioType);
-        pAudioType->Release();
+            HRESULT hrAudio = m_pReader->SetCurrentMediaType(m_audioStreamIndex, nullptr, pAudioType);
+            pAudioType->Release();
 
-        if (SUCCEEDED(hrAudio)) {
-            m_hasAudio.store(true);
-            WAVEFORMATEX wfx = {};
-            wfx.wFormatTag = WAVE_FORMAT_PCM;
-            wfx.nChannels = 2;
-            wfx.nSamplesPerSec = 44100;
-            wfx.wBitsPerSample = 16;
-            wfx.nBlockAlign = 4;
-            wfx.nAvgBytesPerSec = 44100 * 4;
+            if (SUCCEEDED(hrAudio)) {
+                m_hasAudio.store(true);
+                WAVEFORMATEX wfx = {};
+                wfx.wFormatTag = WAVE_FORMAT_PCM;
+                wfx.nChannels = 2;
+                wfx.nSamplesPerSec = 44100;
+                wfx.wBitsPerSample = 16;
+                wfx.nBlockAlign = 4;
+                wfx.nAvgBytesPerSec = 44100 * 4;
 
-            if (waveOutOpen(&m_hWaveOut, WAVE_MAPPER, &wfx, 0, 0, CALLBACK_NULL) == MMSYSERR_NOERROR) {
-                m_waveHeaders.resize(WAVE_BUFFER_COUNT);
-                m_waveBuffers.resize(WAVE_BUFFER_COUNT, std::vector<uint8_t>(WAVE_BUFFER_SIZE, 0));
-                for (size_t i = 0; i < WAVE_BUFFER_COUNT; ++i) {
-                    ZeroMemory(&m_waveHeaders[i], sizeof(WAVEHDR));
-                    m_waveHeaders[i].lpData = reinterpret_cast<LPSTR>(m_waveBuffers[i].data());
-                    m_waveHeaders[i].dwBufferLength = static_cast<DWORD>(WAVE_BUFFER_SIZE);
-                    m_waveHeaders[i].dwFlags = WHDR_DONE;
+                if (waveOutOpen(&m_hWaveOut, WAVE_MAPPER, &wfx, 0, 0, CALLBACK_NULL) == MMSYSERR_NOERROR) {
+                    m_waveHeaders.resize(WAVE_BUFFER_COUNT);
+                    m_waveBuffers.resize(WAVE_BUFFER_COUNT, std::vector<uint8_t>(WAVE_BUFFER_SIZE, 0));
+                    for (size_t i = 0; i < WAVE_BUFFER_COUNT; ++i) {
+                        ZeroMemory(&m_waveHeaders[i], sizeof(WAVEHDR));
+                        m_waveHeaders[i].lpData = reinterpret_cast<LPSTR>(m_waveBuffers[i].data());
+                        m_waveHeaders[i].dwBufferLength = static_cast<DWORD>(WAVE_BUFFER_SIZE);
+                        m_waveHeaders[i].dwFlags = WHDR_DONE;
+                    }
+                    m_currentWaveHdr = 0;
                 }
-                m_currentWaveHdr = 0;
             }
         }
     }
 
-    // Query presentation duration
+    // Query duration
     PROPVARIANT var;
     PropVariantInit(&var);
     hr = m_pReader->GetPresentationAttribute((DWORD)MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &var);
     if (SUCCEEDED(hr) && var.vt == VT_UI8) {
-        // MF duration is in 100-nanosecond units (hns)
         m_durationUs = var.uhVal.QuadPart / 10;
     }
     PropVariantClear(&var);
@@ -259,7 +287,6 @@ void VideoDecoder::writeAudioPcm(const uint8_t* data, size_t length) {
         std::vector<uint8_t>& buf = m_waveBuffers[m_currentWaveHdr];
         std::memcpy(buf.data(), data + offset, chunk);
 
-        // Apply real-time volume scaling
         if (vol < 0.999f) {
             int16_t* samples = reinterpret_cast<int16_t*>(buf.data());
             size_t sampleCount = chunk / sizeof(int16_t);
@@ -333,8 +360,8 @@ void VideoDecoder::decodeLoop() {
             continue;
         }
 
-        // Process Audio Stream
-        if (streamIndex == (DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM) {
+        // Process Audio Sample
+        if (m_audioStreamIndex != (DWORD)-1 && streamIndex == m_audioStreamIndex) {
             if (m_hWaveOut && !m_mute.load() && m_volume.load() > 0.001f) {
                 IMFMediaBuffer* pBuffer = nullptr;
                 if (SUCCEEDED(pSample->ConvertToContiguousBuffer(&pBuffer)) && pBuffer) {
@@ -351,8 +378,8 @@ void VideoDecoder::decodeLoop() {
             continue;
         }
 
-        // Process Video Stream
-        if (streamIndex == (DWORD)MF_SOURCE_READER_FIRST_VIDEO_STREAM) {
+        // Process Video Sample
+        if (streamIndex == m_videoStreamIndex) {
             IMFMediaBuffer* pBuffer = nullptr;
             hr = pSample->ConvertToContiguousBuffer(&pBuffer);
             if (SUCCEEDED(hr) && pBuffer) {

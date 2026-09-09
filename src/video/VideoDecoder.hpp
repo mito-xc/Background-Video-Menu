@@ -87,6 +87,8 @@ private:
 #ifdef _WIN32
     IMFSourceReader* m_pReader{nullptr};
     bool m_mfInitialized{false};
+    DWORD m_videoStreamIndex{(DWORD)-1};
+    DWORD m_audioStreamIndex{(DWORD)-1};
     HWAVEOUT m_hWaveOut{nullptr};
     std::vector<WAVEHDR> m_waveHeaders;
     std::vector<std::vector<uint8_t>> m_waveBuffers;
